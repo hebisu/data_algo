@@ -18,10 +18,14 @@ int bin_search_ins(const int array[], int num_elements, int key)
 	}
 
 	printf("   |");
-	for(int i = 0; i < num_elements; i++) printf("   %d",i);
+	for(int i = 0; i < num_elements; i++){
+		printf("   %d",i);
+	}
 	printf("\n");
 	printf("---+");
-	for(int i = 0; i < num_elements; i++) printf("----");
+	for(int i = 0; i < num_elements; i++){
+		printf("----");
+	}
 	printf("\n");
 
 	do {
@@ -29,31 +33,47 @@ int bin_search_ins(const int array[], int num_elements, int key)
 
         //Show progress
         printf("   |");
-        for (int j = 0; j < pl; j++) printf("    ");
+        for (int j = 0; j < pl; j++){
+			printf("    ");
+		}
         printf("  <-");
-        for (int j = 0; j < pc - pl - 1; j++) printf("    ");
+        for (int j = 0; j < pc - pl - 1; j++){
+			printf("    ");
+		}
         printf("   +");
-        for (int j = 0; j < pr - pc - 1; j++) printf("    ");
+        for (int j = 0; j < pr - pc - 1; j++){
+			printf("    ");
+		}
         printf("  ->\n");
 
         printf("  %d|", pc);
-		for (int j = 0; j < num_elements; j++) printf("   %d", array[j]);
+		for (int j = 0; j < num_elements; j++){
+			printf("   %d", array[j]);
+		}
 		printf("\n");
 		printf("   |");
-		for (int j = 0; j < num_elements; j++) printf("    ");
+		for (int j = 0; j < num_elements; j++){
+			printf("    ");
+		}
 		printf("\n");
 
 		if (array[pc] == key){
 			if (pc > 0) return pc;
 		}
-		else if (array[pc] < key)
+		else if (array[pc] < key){
 			pl = pc + 1;
-		else
+		}
+		else{
 			pr = pc - 1;
+		}
 	} while (pl <= pr);
 
-	if(pc == pr) return pc + 1;
-	else return pc;
+	if(pc == pr){
+		return pc + 1;
+	}
+	else{
+		return pc;
+	}
 }
 
 int insertion(int array[], int num_elements)
@@ -62,7 +82,9 @@ int insertion(int array[], int num_elements)
 
 	for (i = 1; i < num_elements; i++) {
         //Draw number
-		for (j = 0; j < num_elements; j++)	printf(" %d", array[j]);
+		for (j = 0; j < num_elements; j++){
+			printf(" %d", array[j]);
+		}
         putchar('\n');
 
         //Insert
@@ -77,10 +99,18 @@ int insertion(int array[], int num_elements)
 
         // Draw area mark
         for (j = 0; j < num_elements; j++){
-            if(j < target) printf("  ");
-            else if(j == target) printf("^-");
-            else if(j > target && j < i) printf("--");
-            else if(j == i) printf("-+");
+            if(j < target){
+				printf("  ");
+			}
+            else if(j == target){
+				printf("^-");
+			}
+            else if(j > target && j < i){
+				printf("--");
+			}
+            else if(j == i){
+				printf("-+");
+			}
         }
         putchar('\n');
 	}
@@ -90,7 +120,7 @@ int insertion(int array[], int num_elements)
 int main(void)
 {
 	int i, num_elements;
-	int *array;	//Array
+	int *array;
 
 	printf("Binary insertion sort\n");
 	printf("Num:");
@@ -112,10 +142,13 @@ int main(void)
     }
 
 	printf("Sorted.\n");
-	for (i = 0; i < num_elements; i++)
+	for (i = 0; i < num_elements; i++){
 		printf("array[%d] = %d\n", i, array[i]);
+	}
 
-	if(array != NULL) free(array);
+	if(array != NULL){
+		free(array);
+	}
 
 	return 0;
 }
