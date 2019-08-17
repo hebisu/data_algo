@@ -3,46 +3,46 @@
 #include <stdio.h>
 #include "HanoiStack.h"
 
-void hanoi(HanoiStack* stk)
+void hanoi_tower(HanoiStack* stk)
 {
-	Hanoi x;		//Hanoi tower struct
+	Hanoi hanoi;		//Hanoi tower struct
 	char temp;		//to swap tower
 	int cnt = 1;	//Disk move count
 //	int loop = 0;
 
 	while(!IsEmpty(stk)){
 		// printf("Loop: %d\n", loop++);
-		Peek(stk, &x);
-		// printf("x.num:%d\n", x.num);
-		if(x.num > 2){
-			x.num--;
-			temp = x.work;
-			x.work = x.dest;
-			x.dest = temp;
-			Push(stk, x); //from, dest, work
+		Peek(stk, &hanoi);
+		// printf("hanoi.num:%d\n", hanoi.num);
+		if(hanoi.num > 2){
+			hanoi.num--;
+			temp = hanoi.work;
+			hanoi.work = hanoi.dest;
+			hanoi.dest = temp;
+			Push(stk, hanoi); //from, dest, work
 		}
-		else if(x.num == 2){
-			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, x.from, x.dest, x.work);
-			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, x.from, x.work, x.dest);
-			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, x.work, x.from, x.dest);
-			Pop(stk, &x);
+		else if(hanoi.num == 2){
+			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, hanoi.from, hanoi.dest, hanoi.work);
+			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, hanoi.from, hanoi.work, hanoi.dest);
+			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, hanoi.work, hanoi.from, hanoi.dest);
+			Pop(stk, &hanoi);
 			if(!IsEmpty(stk)){
-				Peek(stk, &x);
-				x.num = 1;
-				Push(stk, x); //from, dest, work
+				Peek(stk, &hanoi);
+				hanoi.num = 1;
+				Push(stk, hanoi); //from, dest, work
 			}
 		}
-		else if(x.num == 1){
-			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, x.from, x.work, x.dest);
+		else if(hanoi.num == 1){
+			printf("Count:%d Disk is moved from %c through %c to %c\n", cnt++, hanoi.from, hanoi.work, hanoi.dest);
 			if(Size(stk) > 1){
 				// printf("Size(stk):%d\n", Size(stk));
-				Pop(stk, &x);
-				Pop(stk, &x);
-				x.num--;
-				temp = x.from;
-				x.from = x.work;
-				x.work = temp;
-				Push(stk, x); //work, from, dest
+				Pop(stk, &hanoi);
+				Pop(stk, &hanoi);
+				hanoi.num--;
+				temp = hanoi.from;
+				hanoi.from = hanoi.work;
+				hanoi.work = temp;
+				Push(stk, hanoi); //work, from, dest
 			}
 			else{
 				printf("Clear stack\n");
@@ -57,19 +57,19 @@ int main(void)
 {
 	int n;			//Num of disks
 	HanoiStack stk;	//Stack
-	Hanoi x;		//Hanoi tower struct
+	Hanoi hanoi;		//Hanoi tower struct
 	Initialize(&stk, 100);
 
 	printf("Hanoi Tower\nNum of disk: ");
 	scanf("%d", &n);
-	x.num = n;
-	x.from = 'A';
-	x.work = 'B';
-	x.dest = 'C';
-	Push(&stk, x);
+	hanoi.num = n;
+	hanoi.from = 'A';
+	hanoi.work = 'B';
+	hanoi.dest = 'C';
+	Push(&stk, hanoi);
 
-	printf("Disks are moved from %c through %c to %c\n", x.from, x.work, x.dest);
-	hanoi(&stk);
+	printf("Disks are moved from %c through %c to %c\n", hanoi.from, hanoi.work, hanoi.dest);
+	hanoi_tower(&stk);
 
 	printf("Hanoi Tower move finished.\n");
 	Terminate(&stk);
