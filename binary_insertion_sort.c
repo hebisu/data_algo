@@ -4,16 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-int bin_search_ins(const int a[], int n, int key)
+int bin_search_ins(const int array[], int n, int key)
 {
 	int pl = 0;			//Search left
 	int pr = n - 1;		//Search right
 	int pc;				//Search centre
 
-	if(key >= a[pr]){
+	if(key >= array[pr]){
 		return n; //No insertion
 	}
-	else if(key <= a[pl]){
+	else if(key <= array[pl]){
 		return 0; //Insert to [0]
 	}
 
@@ -37,16 +37,16 @@ int bin_search_ins(const int a[], int n, int key)
         printf("  ->\n");
 
         printf("  %d|", pc);
-		for (int j = 0; j < n; j++) printf("   %d", a[j]);
+		for (int j = 0; j < n; j++) printf("   %d", array[j]);
 		printf("\n");
 		printf("   |");
 		for (int j = 0; j < n; j++) printf("    ");
 		printf("\n");
 
-		if (a[pc] == key){
+		if (array[pc] == key){
 			if (pc > 0) return pc;
 		}
-		else if (a[pc] < key)
+		else if (array[pc] < key)
 			pl = pc + 1;
 		else
 			pr = pc - 1;
@@ -56,31 +56,31 @@ int bin_search_ins(const int a[], int n, int key)
 	else return pc;
 }
 
-int insertion(int a[], int n)
+int insertion(int array[], int n)
 {
-	int i, k, tmp = 0, target = 0;
+	int i, j, tmp = 0, target = 0;
 
 	for (i = 1; i < n; i++) {
         //Draw number
-		for (k = 0; k < n; k++)	printf(" %d", a[k]);
+		for (j = 0; j < n; j++)	printf(" %d", array[j]);
         putchar('\n');
 
         //Insert
-		tmp = a[i];
-		target = bin_search_ins(a, i, tmp);
+		tmp = array[i];
+		target = bin_search_ins(array, i, tmp);
 
-        if(memmove(&a[target + 1], &a[target], sizeof(int) * (i - target)) == NULL){
+        if(memmove(&array[target + 1], &array[target], sizeof(int) * (i - target)) == NULL){
             printf("Failed to memmove\n");
             return -1;
         }
-		a[target] = tmp;
+		array[target] = tmp;
 
         // Draw area mark
-        for (k = 0; k < n; k++){
-            if(k < target) printf("  ");
-            else if(k == target) printf("^-");
-            else if(k > target && k < i) printf("--");
-            else if(k == i) printf("-+");
+        for (j = 0; j < n; j++){
+            if(j < target) printf("  ");
+            else if(j == target) printf("^-");
+            else if(j > target && j < i) printf("--");
+            else if(j == i) printf("-+");
         }
         putchar('\n');
 	}
@@ -89,33 +89,33 @@ int insertion(int a[], int n)
 
 int main(void)
 {
-	int i, nx;
-	int *x;	//Array
+	int i, num_elements;
+	int *array;	//Array
 
 	printf("Binary insertion sort\n");
 	printf("Num:");
-	scanf("%d", &nx);
-	x = calloc(nx, sizeof(int));
-	if(x == NULL){
+	scanf("%d", &num_elements);
+	array = calloc(num_elements, sizeof(int));
+	if(array == NULL){
 		printf("Failed to calloc\n");
 		return 0;
 	}
 
-	for (i = 0; i < nx; i++) {
-		printf("x[%d] : ", i);
-		scanf("%d", &x[i]);
+	for (i = 0; i < num_elements; i++) {
+		printf("array[%d] : ", i);
+		scanf("%d", &array[i]);
 	}
 
-	if(insertion(x, nx) < 0){
+	if(insertion(array, num_elements) < 0){
         printf("Failed to insert sort.\n");
         return 0;
     }
 
 	printf("Sorted.\n");
-	for (i = 0; i < nx; i++)
-		printf("x[%d] = %d\n", i, x[i]);
+	for (i = 0; i < num_elements; i++)
+		printf("array[%d] = %d\n", i, array[i]);
 
-	if(x != NULL) free(x);
+	if(array != NULL) free(array);
 
 	return 0;
 }
