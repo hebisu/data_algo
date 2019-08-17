@@ -4,24 +4,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-int bin_search_ins(const int array[], int n, int key)
+int bin_search_ins(const int array[], int num_elements, int key)
 {
 	int pl = 0;			//Search left
-	int pr = n - 1;		//Search right
+	int pr = num_elements - 1;		//Search right
 	int pc;				//Search centre
 
 	if(key >= array[pr]){
-		return n; //No insertion
+		return num_elements; //No insertion
 	}
 	else if(key <= array[pl]){
 		return 0; //Insert to [0]
 	}
 
 	printf("   |");
-	for(int i = 0; i < n; i++) printf("   %d",i);
+	for(int i = 0; i < num_elements; i++) printf("   %d",i);
 	printf("\n");
 	printf("---+");
-	for(int i = 0; i < n; i++) printf("----");
+	for(int i = 0; i < num_elements; i++) printf("----");
 	printf("\n");
 
 	do {
@@ -37,10 +37,10 @@ int bin_search_ins(const int array[], int n, int key)
         printf("  ->\n");
 
         printf("  %d|", pc);
-		for (int j = 0; j < n; j++) printf("   %d", array[j]);
+		for (int j = 0; j < num_elements; j++) printf("   %d", array[j]);
 		printf("\n");
 		printf("   |");
-		for (int j = 0; j < n; j++) printf("    ");
+		for (int j = 0; j < num_elements; j++) printf("    ");
 		printf("\n");
 
 		if (array[pc] == key){
@@ -56,13 +56,13 @@ int bin_search_ins(const int array[], int n, int key)
 	else return pc;
 }
 
-int insertion(int array[], int n)
+int insertion(int array[], int num_elements)
 {
 	int i, j, tmp = 0, target = 0;
 
-	for (i = 1; i < n; i++) {
+	for (i = 1; i < num_elements; i++) {
         //Draw number
-		for (j = 0; j < n; j++)	printf(" %d", array[j]);
+		for (j = 0; j < num_elements; j++)	printf(" %d", array[j]);
         putchar('\n');
 
         //Insert
@@ -76,7 +76,7 @@ int insertion(int array[], int n)
 		array[target] = tmp;
 
         // Draw area mark
-        for (j = 0; j < n; j++){
+        for (j = 0; j < num_elements; j++){
             if(j < target) printf("  ");
             else if(j == target) printf("^-");
             else if(j > target && j < i) printf("--");
