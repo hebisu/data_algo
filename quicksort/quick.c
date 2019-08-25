@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////////
+// Quick sort algorithm utilizing insertion sort, stack
+// and binary search
+// Created by Hiro Ebisu
+////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -113,7 +118,7 @@ int quick_stk(int array[], int left, int right)
 		int ptr_left = (Pop(&lstack, &left), left); // Left cursur pointer
 		int ptr_right = (Pop(&rstack, &right), right); // Right cursur pointer
 
-		// Select povot element
+		// Select pivot element
         int med = sort3element(array, ptr_left, (ptr_left + ptr_right) / 2, ptr_right);
         swap(int, array[med], array[ptr_right - 1]);
         int pivot = array[ptr_right - 1];
