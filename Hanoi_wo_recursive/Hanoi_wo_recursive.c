@@ -1,11 +1,16 @@
-//Hanoi Tower without recursive function
-
+////////////////////////////////////////////////////////
+// Hanoi Tower without recursive function
+// Created by Hiro Ebisu
+////////////////////////////////////////////////////////
 #include <stdio.h>
 #include "HanoiStack.h"
+#include "gettime.h"
+
+#define MAX_DISK 100
 
 void hanoi_tower(HanoiStack* stk)
 {
-	Hanoi hanoi;		//Hanoi tower struct
+	Hanoi hanoi;	//Hanoi tower struct
 	char temp;		//to swap tower
 	int cnt = 1;	//Disk move count
 //	int loop = 0;
@@ -53,23 +58,41 @@ void hanoi_tower(HanoiStack* stk)
 	printf("Disk move count:%d\n", cnt - 1);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-	int n;			//Num of disks
 	HanoiStack stk;	//Stack
-	Hanoi hanoi;		//Hanoi tower struct
-	Initialize(&stk, 100);
+	Hanoi hanoi;	//Hanoi tower struct
+    double start_time;
+    double process_time;
 
-	printf("Hanoi Tower\nNum of disk: ");
-	scanf("%d", &n);
-	hanoi.num = n;
+	if(Initialize(&stk, MAX_DISK) < 0){
+		fprintf(stderr, "Failed to initialize stack.\n");
+		return 0;
+	}
+
+	if (argc != 2) {
+		fprintf(stderr, "Usage: %s NUM_OF_ELEMENTS\n", argv[0]);
+		return 0;
+	}
+
+	int num_disk = atoi(argv[1]); //Num of disks
+	if(num_disk < 1 || MAX_DISK < num_disk){
+		fprintf(stderr, "NUM_OF_ELEMENTS must be larger than 1 and smaller than 100\n");
+		return 0;
+	}
+
+	printf("Hanoi Tower\n");
+	hanoi.num = num_disk;
 	hanoi.from = 'A';
 	hanoi.work = 'B';
 	hanoi.dest = 'C';
 	Push(&stk, hanoi);
 
 	printf("Disks are moved from %c through %c to %c\n", hanoi.from, hanoi.work, hanoi.dest);
+	start_time = gettime();
 	hanoi_tower(&stk);
+	process_time = (gettime() - start_time) * 1000; // sec to msec
+	printf("Process time:  %8.8f [msec]\n", process_time);
 
 	printf("Hanoi Tower move finished.\n");
 	Terminate(&stk);
