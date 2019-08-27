@@ -8,6 +8,7 @@
 #include <time.h>
 #include <string.h>
 #include "IntStack.h"
+#include "gettime.h"
 
 #define swap(type, x, y) do { type t = x; x = y; y = t; } while (0)
 #define QUICK_OR_INSERT 9
@@ -86,7 +87,7 @@ int insertion_sort_cmp(int array[], int n,\
 
 		// Use memmove for faster process
         if(memmove(&array[target + 1], &array[target], sizeof(int) * (i - target)) == NULL){
-            printf("Failed to memmove\n");
+            fprintf(stderr, "Failed to memmove\n");
             return -1;
         }
 		array[target] = tmp;
@@ -116,7 +117,7 @@ int init_stack(IntStack *lstack, IntStack *rstack, int left, int right){
 	return 0;
 }
 
-void quick_sort_cmp(void *base, size_t nmemb, size_t size,\
+void quick_sort_cmp(void *base, size_t nmemb, size_t size, int print_process,\
 			int (*compar)(const void *, const void *)){
 	IntStack lstack; // Stack for left indexes of devided array
 	IntStack rstack; // Stack for right indexes of devided array
@@ -137,8 +138,10 @@ void quick_sort_cmp(void *base, size_t nmemb, size_t size,\
 
 	printf("-----------------\n");
 	while (!IsEmpty(&lstack)) {
-		printf("loop No.%d\n", loop_cnt++);
-        printf("stack No.%d\n", --stack_cnt);
+		if(print_process){
+			printf("loop No.%d\n", loop_cnt++);
+        	printf("stack No.%d\n", --stack_cnt);
+		}
 		int ptr_left = (Pop(&lstack, &left), left); // Left cursur pointer
 		int ptr_right = (Pop(&rstack, &right), right); // Right cursur pointer
 
@@ -149,13 +152,14 @@ void quick_sort_cmp(void *base, size_t nmemb, size_t size,\
         ptr_left += 1;
         ptr_right -= 2;
 
-		printf("ptr_left:%d, ptr_right:%d, pivot:%d\n", ptr_left, ptr_right, pivot);
-		printf("array[%d] ~ array[%d]: ", ptr_left, ptr_right);
-		for(int i = ptr_left; i <= ptr_right; i++){
-			printf("%d, ", array[i]);
+		if(print_process){
+			printf("ptr_left:%d, ptr_right:%d, pivot:%d\n", ptr_left, ptr_right, pivot);
+			printf("array[%d] ~ array[%d]: ", ptr_left, ptr_right);
+			for(int i = ptr_left; i <= ptr_right; i++){
+				printf("%d, ", array[i]);
+			}
+			printf("\n");
 		}
-		printf("\n");
-
 		// Progress pointers and swap elements
 		do {
 			while (compar(&array[ptr_left], &pivot) < 0) ptr_left++;
@@ -204,34 +208,44 @@ void quick_sort_cmp(void *base, size_t nmemb, size_t size,\
                 }
             }
 		}
-		printf("-----------------\n");
+		if(print_process) printf("-----------------\n");
 	}
 
 	Terminate(&lstack);
 	Terminate(&rstack);
-    printf("total loop count:%d, max stack count:%d, binary search count:%d\n",\
-			loop_cnt, max_stack_cnt, bin_search_cnt);
+	if(print_process){
+	    printf("total loop count:%d, max stack count:%d, binary search count:%d\n",\
+				loop_cnt, max_stack_cnt, bin_search_cnt);
+	}
 }
 
 int main(int argc, char *argv[])
 {
-	int i, num_elem, cmp_type;
+	int i;
 	int *array;
+    double start_time;
+    double process_time;
 
-	if (argc != 3) {
-		fprintf(stderr, "Usage: %s NUM_OF_ELEMENTS COMPARE_TYPE(0: ascending, 1: descending)\n", argv[0]);
+	if (argc != 4) {
+		fprintf(stderr, "Usage: %s NUM_OF_ELEMENTS COMPARE_TYPE(0: ascending, 1: descending) PRINT_SORT_PROCESS(0:no, 1:yes)\n", argv[0]);
 		return 0;
 	}
 
-	num_elem = atoi(argv[1]);
+	int num_elem = atoi(argv[1]);
 	if(num_elem < 2){
 		fprintf(stderr, "NUM_OF_ELEMENTS must be larger than 2\n");
 		return 0;
 	}
 
-	cmp_type = atoi(argv[2]);
+	int cmp_type = atoi(argv[2]);
 	if(cmp_type < 0 || cmp_type > 1){
 		fprintf(stderr, "COMPARE_TYPE(0: ascending, 1: descending)\n");
+		return 0;
+	}
+
+	int print_process = atoi(argv[3]);
+	if(print_process < 0 || print_process > 1){
+		fprintf(stderr, "PRINT_SORT_PROCESS(0:no, 1:yes)\n");
 		return 0;
 	}
 
@@ -246,29 +260,36 @@ int main(int argc, char *argv[])
     printf("RAND_MAX=%d\n",RAND_MAX);
     for(i = 0; i < num_elem; i++){
         array[i] = rand() % num_elem; // 0 - num_elem
-        printf("%d, ", array[i]);
+        if(print_process) printf("%d, ", array[i]);
     }
     printf("\n-----------------\n");
 
 	// Quick sort with stack and compare function pointer
 	if(cmp_type == 0){
 		printf("Quick sort (ascending) starts.\n");
-		quick_sort_cmp((void*)array, (size_t)num_elem, (size_t)sizeof(array[0]),\
+		start_time = gettime();
+		quick_sort_cmp((void*)array, (size_t)num_elem, (size_t)sizeof(array[0]), print_process,\
 						(int(*)(const void *, const void *))int_compare_ascending);
 	}
 	else if(cmp_type == 1){
 		printf("Quick sort (descending) starts.\n");
-		quick_sort_cmp((void*)array, (size_t)num_elem, (size_t)sizeof(array[0]),\
+		start_time = gettime();
+		quick_sort_cmp((void*)array, (size_t)num_elem, (size_t)sizeof(array[0]), print_process,\
 						(int(*)(const void *, const void *))int_compare_descending);
 	}
 
+	process_time = (gettime() - start_time) * 1000; // sec to msec
+
 	printf("Quick sort finished.\n");
-	for (i = 0; i < num_elem; i++){
-		printf("array[%d] = %d\n", i, array[i]);
+	if(print_process){
+		for (i = 0; i < num_elem; i++){
+			printf("array[%d] = %d\n", i, array[i]);
+		}
 	}
 
+	printf("Process time:  %8.8f [msec]\n", process_time);
+
 	if(array){
-		printf("Free array.\n");
 		free(array);
 	}
 

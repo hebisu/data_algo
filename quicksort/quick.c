@@ -8,6 +8,7 @@
 #include <time.h>
 #include <string.h>
 #include "IntStack.h"
+#include "gettime.h"
 
 #define swap(type, x, y) do { type t = x; x = y; y = t; } while (0)
 #define QUICK_OR_INSERT 9
@@ -65,7 +66,7 @@ int insertion_sort(int array[], int n)
 
 		// Use memmove for faster process
         if(memmove(&array[target + 1], &array[target], sizeof(int) * (i - target)) == NULL){
-            printf("Failed to memmove\n");
+            fprintf(stderr, "Failed to memmove\n");
             return -1;
         }
 		array[target] = tmp;
@@ -96,7 +97,7 @@ int init_stack(IntStack *lstack, IntStack *rstack, int left, int right){
 }
 
 // Quick sort with stack (no recursive function)
-int quick_stk(int array[], int left, int right)
+int quick_stk(int array[], int left, int right, int print_process)
 {
 	IntStack lstack; // Stack for left indexes of devided array
 	IntStack rstack; // Stack for right indexes of devided array
@@ -113,8 +114,10 @@ int quick_stk(int array[], int left, int right)
 
 	printf("-----------------\n");
 	while (!IsEmpty(&lstack)) {
-		printf("loop No.%d\n", loop_cnt++);
-        printf("stack No.%d\n", --stack_cnt);
+		if(print_process){
+			printf("loop No.%d\n", loop_cnt++);
+        	printf("stack No.%d\n", --stack_cnt);
+		}
 		int ptr_left = (Pop(&lstack, &left), left); // Left cursur pointer
 		int ptr_right = (Pop(&rstack, &right), right); // Right cursur pointer
 
@@ -125,12 +128,14 @@ int quick_stk(int array[], int left, int right)
         ptr_left += 1;
         ptr_right -= 2;
 
-		printf("ptr_left:%d, ptr_right:%d, pivot:%d\n", ptr_left, ptr_right, pivot);
-		printf("array[%d] ~ array[%d]: ", ptr_left, ptr_right);
-		for(int i = ptr_left; i <= ptr_right; i++){
-			printf("%d, ", array[i]);
+		if(print_process){
+			printf("ptr_left:%d, ptr_right:%d, pivot:%d\n", ptr_left, ptr_right, pivot);
+			printf("array[%d] ~ array[%d]: ", ptr_left, ptr_right);
+			for(int i = ptr_left; i <= ptr_right; i++){
+				printf("%d, ", array[i]);
+			}
+			printf("\n");
 		}
-		printf("\n");
 
 		// Progress pointers and swap elements
 		do {
@@ -180,28 +185,38 @@ int quick_stk(int array[], int left, int right)
                 }
             }
 		}
-		printf("-----------------\n");
+		if(print_process) printf("-----------------\n");
 	}
 	Terminate(&lstack);
 	Terminate(&rstack);
-    printf("total loop count:%d, max stack count:%d, binary search count:%d\n",\
-			loop_cnt, max_stack_cnt, bin_search_cnt);
+	if(print_process){
+	    printf("total loop count:%d, max stack count:%d, binary search count:%d\n",\
+				loop_cnt, max_stack_cnt, bin_search_cnt);
+	}
 	return 0;
 }
 
 int main(int argc, char *argv[])
 {
-	int i, num_elem;
+	int i;
 	int *array;
+    double start_time;
+    double process_time;
 
-	if (argc != 2) {
-		fprintf(stderr, "Usage: %s NUM_OF_ELEMENTS\n", argv[0]);
+	if (argc != 3) {
+		fprintf(stderr, "Usage: %s NUM_OF_ELEMENTS PRINT_SORT_PROCESS(0:no, 1:yes)\n", argv[0]);
 		return 0;
 	}
 
-	num_elem = atoi(argv[1]);
+	int num_elem = atoi(argv[1]);
 	if(num_elem < 2){
 		fprintf(stderr, "NUM_OF_ELEMENTS must be larger than 2\n");
+		return 0;
+	}
+
+	int print_process = atoi(argv[2]);
+	if(print_process < 0 || print_process > 1){
+		fprintf(stderr, "PRINT_SORT_PROCESS(0:no, 1:yes)\n");
 		return 0;
 	}
 
@@ -216,25 +231,29 @@ int main(int argc, char *argv[])
     printf("RAND_MAX=%d\n",RAND_MAX);
     for(i = 0; i < num_elem; i++){
         array[i] = rand() % num_elem; // 0 - num_elem
-        printf("%d, ", array[i]);
+        if(print_process) printf("%d, ", array[i]);
     }
-    printf("-----------------\n");
+    if(print_process) printf("-----------------\n");
 
 	// Quick sort with stack
 	printf("Quick sort (stack version) starts.\n");
-	if(quick_stk(array, 0, num_elem - 1) < 0){
-		printf("Quick sort failed.\n");
+	start_time = gettime();
+	if(quick_stk(array, 0, num_elem - 1, print_process) < 0){
+		fprintf(stderr, "Quick sort failed.\n");
 		free(array);
 		return 0;
 	}
+	process_time = (gettime() - start_time) * 1000; // sec to msec
 
 	printf("Quick sort finished.\n");
-	for (i = 0; i < num_elem; i++){
-		printf("array[%d] = %d\n", i, array[i]);
+	if(print_process){
+		for (i = 0; i < num_elem; i++){
+			printf("array[%d] = %d\n", i, array[i]);
+		}
 	}
+	printf("Process time:  %8.8f [msec]\n", process_time);
 
 	if(array){
-		printf("Free array.\n");
 		free(array);
 	}
 
