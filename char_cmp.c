@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-    str1 = argv[1];
+    str1 = argv[1]; // String 1
     if(!str1){
         fprintf(stderr, "String1 NULL\n");
 		return 0;
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-    str2 = argv[2];
+    str2 = argv[2]; // String 2
     if(!str2){
         fprintf(stderr, "String2 NULL\n");
 		return 0;
@@ -106,13 +106,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	num_char = atoi(argv[3]);
+	num_char = atoi(argv[3]); // Number of character to compare
 	if(num_char < 0){
 		fprintf(stderr, "Num_character(0:all)\n");
 		return 0;
 	}
 
-    upper_lower = atoi(argv[4]);
+    upper_lower = atoi(argv[4]); // Distinguish upper and lower case?
 	if(upper_lower < 0 || 1 < upper_lower ){
 		fprintf(stderr, "Does_distinguish_upper_lower(0:yes, 1:no)\n");
 		return 0;
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
             printf("str_cmp(%s, %s) = %d\n", str1, str2, str_ncmp(str1, str2, num_char));
     }
     else{
-        if(num_char == 0)
+        if(num_char == 0) // Not distinguish upper and lower case
 	        printf("str_cmp(%s, %s) = %d\n", str1, str2, str_cmpic(str1, str2));
         else
             printf("str_cmp(%s, %s) = %d\n", str1, str2, str_ncmpic(str1, str2, num_char));
