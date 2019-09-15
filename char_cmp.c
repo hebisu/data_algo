@@ -30,7 +30,7 @@ int str_cmpic(const char *str1, const char *str2)
 		str1++;
 		str2++;
 	}
-	return (unsigned char)*str1 - (unsigned char)*str2;
+	return (unsigned char)tolower((int)(*str1)) - (unsigned char)tolower((int)(*str2));
 }
 
 // Compare n characters of 2 strings
@@ -59,7 +59,7 @@ int str_ncmpic(const char *str1, const char *str2, size_t n)
 {
 	while (n > 0 && *str1 != '\0' && *str2 != '\0') {
 		if (tolower((int)(*str1)) != tolower((int)(*str2)))
-			return (unsigned char)*str1 - (unsigned char)*str2;
+			return (unsigned char)tolower((int)(*str1)) - (unsigned char)tolower((int)(*str2));
 		str1++;
 		str2++;
         n--;
