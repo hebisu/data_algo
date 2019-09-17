@@ -67,8 +67,7 @@ void print_comparison_process(const char text[], const char pattern[], const int
 	printf("\n");
 }
 
-int boyermoore_match(const char text[], const char pattern[], const int print_process)
-{
+int boyermoore_match(const char text[], const char pattern[], const int print_process){
 	int text_len = strlen(text);
 	int pattern_len = strlen(pattern);
 	int skip_table[UCHAR_MAX + 1];		// Skip table
@@ -107,14 +106,99 @@ int boyermoore_match(const char text[], const char pattern[], const int print_pr
 	return -1; // Pattern does not match any part of text
 }
 
-int main(int argc, char *argv[])
-{
+char *str_str(char* text, const char* pattern, const int print_process){
+	int text_len = strlen(text);
+	int pattern_len = strlen(pattern);
+	int skip_table[UCHAR_MAX + 1];		// Skip table
+	int ptr_text = pattern_len - 1;		// Cursor to text (ptr_text starts from the end position of pattern)
+	int ptr_pattern = pattern_len - 1;	// Cursor to pattern (Matching starts from the end character of pattern)
+	int count = 0;
+
+	// Initialize skip table
+	if(init_skiptable(skip_table, pattern, pattern_len, print_process) < 0){
+		fprintf(stderr, "skip_table NULL\n");
+		return NULL;
+	}
+
+	while (ptr_text < text_len) { // Continue to the end of text
+		ptr_pattern = pattern_len - 1; // Matching starts from the end character of pattern
+
+		while (text[ptr_text] == pattern[ptr_pattern]) {
+			if(print_process) print_comparison_process(text, pattern, ptr_text, ptr_pattern, pattern_len);
+			if (ptr_pattern == 0){ // Pattern matches a part of text
+				printf("Total comparison count:%d\n", count);
+				return text + ptr_text;
+			}
+			ptr_pattern--;
+			ptr_text--;
+			count++;
+		}
+		count++;
+
+		if(print_process) print_comparison_process(text, pattern, ptr_text, ptr_pattern, pattern_len);
+
+		// Move text pointer to the next position
+		ptr_text += next_position(skip_table, text[ptr_text], pattern_len - ptr_pattern);
+	}
+
+	printf("Total comparison count:%d\n", count);
+	return NULL; // Pattern does not match any part of text
+}
+
+char *str_rstr(char* text, const char* pattern, const int print_process){
+	int text_len = strlen(text);
+	int pattern_len = strlen(pattern);
+	int skip_table[UCHAR_MAX + 1];		// Skip table
+	int ptr_text = pattern_len - 1;		// Cursor to text (ptr_text starts from the end position of pattern)
+	int ptr_pattern = pattern_len - 1;	// Cursor to pattern (Matching starts from the end character of pattern)
+	int count = 0;
+	int ptr_lastmatch = -1;
+
+	// Initialize skip table
+	if(init_skiptable(skip_table, pattern, pattern_len, print_process) < 0){
+		fprintf(stderr, "skip_table NULL\n");
+		return NULL;
+	}
+
+	while (ptr_text < text_len) { // Continue to the end of text
+		ptr_pattern = pattern_len - 1; // Matching starts from the end character of pattern
+
+		while (text[ptr_text] == pattern[ptr_pattern]) {
+			if(print_process) print_comparison_process(text, pattern, ptr_text, ptr_pattern, pattern_len);
+			if (ptr_pattern == 0){ // Pattern matches a part of text
+				ptr_lastmatch = ptr_text; // Store matched position
+				ptr_pattern = pattern_len; // Skip to next position
+				ptr_text += (pattern_len * 2); // Skip to next position
+			}
+			ptr_pattern--;
+			ptr_text--;
+			count++;
+		}
+		count++;
+
+		if(print_process) print_comparison_process(text, pattern, ptr_text, ptr_pattern, pattern_len);
+
+		// Move text pointer to the next position
+		ptr_text += next_position(skip_table, text[ptr_text], pattern_len - ptr_pattern);
+	}
+
+	printf("Total comparison count:%d\n", count);
+
+	if(ptr_lastmatch < 0){
+		return NULL; // Pattern does not match any part of text
+	}
+	else{
+		return text + ptr_lastmatch;
+	}
+}
+
+int main(int argc, char *argv[]){
 	char *text;
 	char *pattern;
-    int  idx;
+	char *match;
 
-	if (argc != 4) {
-		fprintf(stderr, "Usage: %s text pattern print_process(0:no, 1:yes)\n", argv[0]);
+	if (argc != 5) {
+		fprintf(stderr, "Usage: %s text pattern print_process(0:no, 1:yes) Start_from(0:left, 1:right)\n", argv[0]);
 		return 0;
 	}
 
@@ -144,12 +228,21 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	idx = boyermoore_match(text, pattern, print);
+	int lr = atoi(argv[4]);
+	if(lr < 0 || 1 < lr){
+		fprintf(stderr, "Start_from(0:left, 1:right)\n");
+		return 0;
+	}
 
-	if (idx < 0)
+	if(lr == 0)
+		match = str_str(text, pattern, print); // Return the first matched string
+	else
+		match = str_rstr(text, pattern, print); // Return the last matched string
+
+	if (!match)
 		printf("%s does not included in %s\n", pattern, text);
 	else
-		printf("%s is matched at %d in %s\n", pattern, idx + 1, text);
+		printf("%s is matched. %s\n", pattern, match);
 
 	return 0;
 }
