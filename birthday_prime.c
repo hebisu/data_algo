@@ -21,17 +21,35 @@ int sum_all_digits(int val1, int val2){
 
 int connect_all_digits(int val1, int val2){
 	int connect = 0;
-	connect += val1 * 100;
 	connect += val2;
+	if(val2 > 9) connect += val1 * 100;
+	else connect += val1 * 10;
 	return connect;
 }
 
 int connect_all_digits_reverse(int val1, int val2){
 	int connect = 0;
-	connect += val1 / 10;
-	connect += (val1 % 10) * 10;
-	connect += (val2 / 10) * 100;
-	connect += (val2 % 10) * 1000;
+	if(val1 > 9){ 
+		connect += val1 / 10;
+		connect += (val1 % 10) * 10;
+		if(val2 > 9){
+			connect += (val2 / 10) * 100;
+			connect += (val2 % 10) * 1000;
+		}
+		else{
+			connect += val2 * 100;
+		}
+	}
+	else{
+		connect += val1;
+		if(val2 > 9){
+			connect += (val2 / 10) * 10;
+			connect += (val2 % 10) * 100;
+		}
+		else{
+			connect += val2 * 10;
+		}
+	}
 	return connect;
 }
 
