@@ -1,3 +1,16 @@
+/////////////////////////////////////////////////////////////////////////
+1. My wife's month of birth is a prime number, so is mine.
+2. Her day of birth is a prime number, so is mine.
+3. The sum of all the digits in her month and day of birth is a prime number, so is mine.
+4. Connect her month of birth with her day of birth, you get a prime number; but if you reverse all the digits, the number is not a prime. For example, if her birthday were January 23, then the connection would lead to the number 123 and reversing all the digits, you would get 321.
+5. Connect my month of birth with my day of birth, you get a prime number; but if you reverse all the digits, the number is not a prime.
+6. Connect my day of birth with her month of birth, you get a prime number; but if you reverse all the digits, the number is not a prime.
+7. Connect my month of birth with her day of birth, you get a prime number; but if you reverse all the digits, the number is not a prime.
+8. Connect her day of birth with my month of birth, you do NOT get a prime number; but if you reverse all the digits, the number is a prime.
+9. Connect her month of birth with my day of birth, you do NOT get a prime number; if you reverse all the digits, the number is NOT a prime either!
+10. Well, things cannot too perfect, can it? So it looks like there is a "difference of a prime". That is true: the difference between the digit sum of my month and day of birth and the digit sum of hers, is a prime!
+/////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 
